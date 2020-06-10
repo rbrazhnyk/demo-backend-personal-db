@@ -1,44 +1,19 @@
 'use strict'
 
+const mongoose        = require('mongoose')
 const express         = require('express')
 const express_graphql = require('express-graphql')
 const { buildSchema } = require('graphql')
 
-const PORT   = 4000
-const schema = buildSchema(`
-  type Query {
-    users: [User]
-  },
-  type Mutation {
-    addUser(firstName: String!, lastName: String!): User
-  }
-  type User {
-    id: Int
-    firstName: String
-    lastName: String
-  }
-`)
+const schema  = require('./schema')
 
-const users = [
-  {
-    firstName: 'Roman',
-    lastName:  'Brazhnyk'
-  }
-]
+const PORT    = 4000
+const DB_URI  = 'mongodb://localhost:27017'
+const DB_NAME = 'demo-personal-db'
 
-const getUsers = function() {
-  return users
-}
+mongoose.connect(`${DB_URI}/${DB_NAME}`, { useNewUrlParser: true })
 
-const addUser = function({ firstName, lastName }) {
-  users.push({ firstName, lastName })
-}
-
-const root = {
-  users:   getUsers,
-  courses: getCourses,
-  addUser: addUser
-}
+mongoose.connection.once('open', () => console.log('connected to database'))
 
 const app = express()
 
