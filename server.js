@@ -7,12 +7,37 @@ const { buildSchema } = require('graphql')
 const PORT   = 4000
 const schema = buildSchema(`
   type Query {
-    message: String
+    users: [User]
+  },
+  type Mutation {
+    addUser(firstName: String!, lastName: String!): User
   }
-`) // Root resolver
+  type User {
+    id: Int
+    firstName: String
+    lastName: String
+  }
+`)
+
+const users = [
+  {
+    firstName: 'Roman',
+    lastName:  'Brazhnyk'
+  }
+]
+
+const getUsers = function() {
+  return users
+}
+
+const addUser = function({ firstName, lastName }) {
+  users.push({ firstName, lastName })
+}
 
 const root = {
-  message: () => 'Hello World!'
+  users:   getUsers,
+  courses: getCourses,
+  addUser: addUser
 }
 
 const app = express()
